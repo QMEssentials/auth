@@ -16,5 +16,12 @@ services:
      - "qme-auth-db-volume:/data/db"
     ports: 
      - "27017:27017"
+  qme-auth-reverse-proxy:
+    build: 
+      context: .
+      dockerfile: Dockerfile.reverseproxy
+    ports:
+     - 8010:8010
+    restart: always
 volumes:
   qme-auth-db-volume:

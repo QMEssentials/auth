@@ -1,5 +1,20 @@
 services:
   qme-auth: 
     build: .
+    environment: 
+     - PORT=3010
+     - MONGODB_HOST=qme-auth-db
+     - MONGODB_PORT=27017
+     - MONGODB_DATABASE_NAME=auth
+     - DEFAULT_ADMIN_USER=admin
+     - INITIAL_ADMIN_PASSWORD=changeMeNow!!!
     ports: 
-     - "8080:8080"
+     - "3010:3010"
+  qme-auth-db:
+    image: mongo:latest
+    volumes: 
+     - "qme-auth-db-volume:/data/db"
+    ports: 
+     - "27017:27017"
+volumes:
+  qme-auth-db-volume:

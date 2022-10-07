@@ -8,10 +8,10 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
-COPY *.go ./
+COPY . ./
 
 RUN go build -o /qme-auth
 
-EXPOSE 8080
+EXPOSE 3010
 
 CMD [ "/qme-auth" ]

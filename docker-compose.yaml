@@ -1,6 +1,8 @@
 services:
   qme-auth: 
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.authservice
     environment: 
      - PORT=3010
      - MONGODB_HOST=qme-auth-db
@@ -8,6 +10,7 @@ services:
      - MONGODB_DATABASE_NAME=auth
      - DEFAULT_ADMIN_USER=admin
      - INITIAL_ADMIN_PASSWORD=changeMeNow!!!
+     - JWT_SECRET=notVerySecret!!!
     ports: 
      - "3010:3010"
   qme-auth-db:

@@ -23,7 +23,7 @@ func (cu *CryptoUtil) Encrypt(password string) ([]byte, error) {
 func (cu *CryptoUtil) Compare(input string, stored string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(stored), []byte(input))
 	if err != nil {
-		return false, errors.New("Invalid user ID or password")
+		return false, errors.New("invalid user ID or password")
 	}
 	return true, nil
 }

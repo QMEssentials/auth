@@ -1,8 +1,11 @@
 package main
 
 import (
+	"auth/authorization"
 	"auth/bootstrap"
+	"auth/middleware"
 	"auth/repositories"
+	"auth/routers"
 	"auth/utilities"
 	"fmt"
 	"net/http"
@@ -21,6 +24,8 @@ func main() {
 	mongoUtil := utilities.NewMongoUtil(utilities.GetDefaultMongoHost(), utilities.GetDefaultMongoPort())
 	userRepository := repositories.NewUserRepository(mongoUtil)
 	cryptoUtil := utilities.NewCryptoUtil()
+	tokenUtil := utilities.NewTokenUtil()
+	permissionsManger := authorization.NewPermissionsManager(userRepository)
 	bootstrapper := bootstrap.NewBootstrapper(userRepository, cryptoUtil)
 	err := bootstrapper.BootstrapAdminUser()
 	if err != nil {
@@ -34,5 +39,11 @@ func main() {
 			"message": "test",
 		})
 	})
+	public := r.Group("/public")
+	routers.RegisterUserInfoForTokens(public)
+	routers.RegisterLogins(public, userRepository, cryptoUtil, tokenUtil)
+	middleware.RegisterGetUserFromToken(r, tokenUtil, userRepository)
+	secure := r.Group("/secure")
+	routers.RegisterPermittedOperations(secure, permissionsManger)
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,13 +17,14 @@ func NewCryptoUtil() *CryptoUtil {
 }
 
 func (cu *CryptoUtil) Encrypt(password string) ([]byte, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return hash, err
 }
 
 func (cu *CryptoUtil) Compare(input string, stored string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(stored), []byte(input))
 	if err != nil {
+		log.Warn().Err(err).Msg("Password comparison failed")
 		return false, errors.New("invalid user ID or password")
 	}
 	return true, nil

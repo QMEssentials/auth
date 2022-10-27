@@ -11,6 +11,7 @@ services:
      - DEFAULT_ADMIN_USER=admin
      - INITIAL_ADMIN_PASSWORD=changeMeNow!!!
      - JWT_SECRET=notVerySecret!!!
+     - CORS_ALLOWED_ORIGIN=http://localhost:3000
     ports: 
      - "3010:3010"
   qme-auth-db:

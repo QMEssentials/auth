@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/rs/zerolog/log"
 )
 
 type TokenUtil struct{}
@@ -34,7 +35,7 @@ func (tu *TokenUtil) GetUserIdFromToken(encodedToken string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("ACCESS_SECRET")), nil
+		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
 		return "", err
@@ -44,8 +45,9 @@ func (tu *TokenUtil) GetUserIdFromToken(encodedToken string) (string, error) {
 		return "", nil
 	}
 	userId, ok := claims["sub"].(string)
-	if !ok {
+	if !ok || userId == "" {
 		return "", errors.New("unable to retrieve user ID from access token")
 	}
+	log.Info().Msgf("Retrieved user ID %s from auth token %s", userId, encodedToken)
 	return userId, nil
 }

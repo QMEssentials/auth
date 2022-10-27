@@ -31,9 +31,10 @@ func (b *Bootstrapper) BootstrapAdminUser() error {
 	if len(*adminUsers) > 0 {
 		return nil //We've got an admin user, all good
 	}
-	log.Warn().Msg("No admin user found; bootstrapping new admin user with default password")
 	defaultUser := os.Getenv("DEFAULT_ADMIN_USER")
-	hashedPasswordBytes, err := b.cryptoUtil.Encrypt(os.Getenv("DEFAULT_ADMIN_PASSWORD"))
+	initialAdminPassword := os.Getenv("INITIAL_ADMIN_PASSWORD")
+	log.Warn().Msgf("No admin user found; bootstrapping new admin user with default password")
+	hashedPasswordBytes, err := b.cryptoUtil.Encrypt(initialAdminPassword)
 	if err != nil {
 		return errors.New("unable to hash default password for default admin user")
 	}

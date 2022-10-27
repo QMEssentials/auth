@@ -15,7 +15,7 @@ func RegisterLogins(public *gin.RouterGroup, userRepo *repositories.UserReposito
 	logins := public.Group("/logins")
 	logins.POST("", func(c *gin.Context) {
 		login := models.Login{}
-		err := c.BindJSON(login)
+		err := c.BindJSON(&login)
 		if err != nil {
 			log.Warn().Err(err).Msg("Unable to bind request body to login model")
 			c.Writer.WriteHeader(http.StatusBadRequest)
@@ -44,6 +44,7 @@ func RegisterLogins(public *gin.RouterGroup, userRepo *repositories.UserReposito
 			c.Writer.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		c.JSON(http.StatusOK, token)
+		user.AuthToken = token
+		c.JSON(http.StatusOK, user)
 	})
 }

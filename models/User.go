@@ -9,4 +9,5 @@ type User struct {
 	IsActive                 bool     `bson:"isActive" json:"isActive"`
 	IsPasswordChangeRequired bool     `bson:"isPasswordChangeRequired" json:"isPasswordChangeRequired"`
 	HashedPassword           string   `bson:"hashedPassword" json:"-"`
+	AuthToken                string   `bson:"-" json:"authToken"`
 }

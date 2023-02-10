@@ -11,10 +11,12 @@ func NewPermissionsManager(userRepo *repositories.UserRepository) *PermissionsMa
 }
 
 func (pm *PermissionsManager) GetPermittedOperationsForRoles(roles []string) []string {
-	permissions := map[string]struct{}{}
+	permissions := make(map[string]struct{})
+	var placeholder = struct{}{}
+	permissions["Log out"] = placeholder
 	for _, role := range roles {
 		if role == "Administrator" {
-			permissions["Create a User"] = struct{}{}
+			permissions["Create a User"] = placeholder
 		}
 		//The idea is to add to this structure as new roles and permissions become available
 		//Eventually it should probably become a table or something

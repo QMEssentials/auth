@@ -21,6 +21,7 @@ import (
 func main() {
 
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 
 	mongoUtil := utilities.NewMongoUtil(utilities.GetDefaultMongoHost(), utilities.GetDefaultMongoPort())
 	userRepository := repositories.NewUserRepository(mongoUtil)
@@ -48,10 +49,10 @@ func main() {
 		AllowCredentials: true,
 	}))
 	public := r.Group("/public")
-	routers.RegisterUserInfoForTokens(public, userRepository)
 	routers.RegisterLogins(public, userRepository, cryptoUtil, tokenUtil)
 	middleware.RegisterGetUserFromToken(r, tokenUtil, userRepository)
 	secure := r.Group("/secure")
+	routers.RegisterUsers(secure, userRepository, permissionsManger)
 	routers.RegisterPermittedOperations(secure, permissionsManger)
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

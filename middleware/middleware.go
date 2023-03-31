@@ -11,30 +11,35 @@ import (
 )
 
 func RegisterGetUserFromToken(r *gin.Engine, tokenUtil *utilities.TokenUtil, userRepo *repositories.UserRepository) {
-	r.Use(func(c *gin.Context) {
-		authHeader := c.Request.Header.Get("Authorization")
-		bearerPattern := regexp.MustCompile("(?i)^bearer (.*)$")
-		tokens := bearerPattern.FindStringSubmatch(authHeader)
-		if tokens == nil {
-			return
+	handler := func() gin.HandlerFunc {
+		return func(c *gin.Context) {
+			authHeader := c.Request.Header.Get("Authorization")
+			log.Info().Msgf("Auth header is %s", authHeader)
+			bearerPattern := regexp.MustCompile("(?i)^bearer (.*)$")
+			tokens := bearerPattern.FindStringSubmatch(authHeader)
+			if tokens == nil {
+				c.Next()
+				return
+			}
+			userId, err := tokenUtil.GetUserIdFromToken(tokens[1])
+			if err != nil {
+				log.Error().Err(err).Stack().Msg("Error getting user ID from token")
+				c.Writer.WriteHeader(http.StatusUnauthorized)
+				c.Abort()
+				return
+			}
+			log.Info().Msgf("Authorization middleware found user ID '%s' in the token", userId)
+			user, err := userRepo.Select(userId)
+			if err != nil {
+				log.Error().Err(err).Msg("")
+				c.Writer.WriteHeader(http.StatusInternalServerError)
+				c.Abort()
+				return
+			}
+			log.Info().Msg("User has been retrieved and placed into context")
+			c.Set("user", user)
+			c.Next()
 		}
-		if len(tokens) > 1 {
-			log.Warn().Msg("Multiple bearer tokens found on request")
-			c.Writer.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		userId, err := tokenUtil.GetUserIdFromToken(tokens[0])
-		if err != nil {
-			log.Error().Err(err).Msg("")
-			c.Writer.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		user, err := userRepo.Select(userId)
-		if err != nil {
-			log.Error().Err(err).Msg("")
-			c.Writer.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		c.Set("user", user)
-	})
+	}
+	r.Use(handler())
 }

@@ -10,10 +10,23 @@ func NewPermissionsManager(userRepo *repositories.UserRepository) *PermissionsMa
 	return &PermissionsManager{userRepo: userRepo}
 }
 
+func (pm *PermissionsManager) IsAllowed(userId string, permission string) (bool, error) {
+	user, err := pm.userRepo.Select(userId)
+	if err != nil {
+		return false, err
+	}
+	operations := pm.GetPermittedOperationsForRoles(user.Roles)
+	for _, operation := range operations {
+		if operation == permission {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 func (pm *PermissionsManager) GetPermittedOperationsForRoles(roles []string) []string {
 	permissions := make(map[string]struct{})
 	var placeholder = struct{}{}
-	permissions["Log out"] = placeholder
 	for _, role := range roles {
 		if role == "Administrator" {
 			permissions["Create a User"] = placeholder

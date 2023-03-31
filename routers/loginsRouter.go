@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func RegisterLogins(public *gin.RouterGroup, userRepo *repositories.UserRepository, crytpUtil *utilities.CryptoUtil,
+func RegisterLogins(public *gin.RouterGroup, userRepo *repositories.UserRepository, cryptoUtil *utilities.CryptoUtil,
 	tokenUtil *utilities.TokenUtil) {
 	logins := public.Group("/logins")
 	logins.POST("", func(c *gin.Context) {
@@ -27,7 +27,7 @@ func RegisterLogins(public *gin.RouterGroup, userRepo *repositories.UserReposito
 			c.Writer.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		correctPassword, err := crytpUtil.Compare(login.Password, user.HashedPassword)
+		correctPassword, err := cryptoUtil.Compare(login.Password, user.HashedPassword)
 		if err != nil {
 			log.Error().Err(err).Msgf("Error verifying password for user %s", login.UserId)
 			c.Writer.WriteHeader(http.StatusInternalServerError)

@@ -23,7 +23,7 @@ func RegisterGetUserFromToken(r *gin.Engine, tokenUtil *utilities.TokenUtil, use
 			}
 			userId, err := tokenUtil.GetUserIdFromToken(tokens[1])
 			if err != nil {
-				log.Error().Err(err).Stack().Msg("Error getting user ID from token")
+				log.Error().Err(err).Stack().Msgf("Error getting user ID from token %s", tokens[1])
 				c.Writer.WriteHeader(http.StatusUnauthorized)
 				c.Abort()
 				return

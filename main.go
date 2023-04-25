@@ -52,7 +52,7 @@ func main() {
 	routers.RegisterLogins(public, userRepository, cryptoUtil, tokenUtil)
 	middleware.RegisterGetUserFromToken(r, tokenUtil, userRepository)
 	secure := r.Group("/secure")
-	routers.RegisterUsers(secure, userRepository, permissionsManger)
+	routers.RegisterUsers(secure, userRepository, permissionsManger, tokenUtil, cryptoUtil)
 	routers.RegisterPermittedOperations(secure, permissionsManger)
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

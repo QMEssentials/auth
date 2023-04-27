@@ -30,6 +30,7 @@ func (pm *PermissionsManager) GetPermittedOperationsForRoles(roles []string) []s
 	for _, role := range roles {
 		if role == "Administrator" {
 			permissions["Create a User"] = placeholder
+			permissions["Search for Users"] = placeholder
 		}
 		//The idea is to add to this structure as new roles and permissions become available
 		//Eventually it should probably become a table or something

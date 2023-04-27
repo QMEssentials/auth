@@ -6,6 +6,7 @@ import (
 	"auth/repositories"
 	"auth/utilities"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -41,6 +42,39 @@ func RegisterUsers(secure *gin.RouterGroup, userRepo *repositories.UserRepositor
 			return
 		}
 		c.JSON(http.StatusOK, user)
+	})
+	users.GET("/", func(c *gin.Context) {
+		requiredPermission := "Search for Users"
+		authenticatedUser, ok := c.Get("user")
+		if !ok {
+			log.Error().Stack().Msg("User ID not found in context")
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		isAllowed, err := permissionsManager.IsAllowed(authenticatedUser.(*models.User).UserID, requiredPermission)
+		if err != nil {
+			log.Error().Stack().Err(err).Msg("Error checking user permissions")
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		if !isAllowed {
+			log.Warn().Msgf("Permissions on '%s' denied to user '%s'", requiredPermission, authenticatedUser.(*models.User).UserID)
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+		roles := c.QueryArray("role")
+		activeOnly := strings.EqualFold(c.Query("activeOnly"), "true")
+		criteria := models.UserCriteria{
+			Roles:      roles,
+			ActiveOnly: activeOnly,
+		}
+		users, err := userRepo.List(&criteria)
+		if err != nil {
+			log.Error().Stack().Err(err).Msg("Error retrieving users")
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		c.JSON(http.StatusOK, users)
 	})
 	users.POST("/", func(c *gin.Context) {
 		requiredPermission := "Create a User"

@@ -31,6 +31,11 @@ func (pm *PermissionsManager) GetPermittedOperationsForRoles(roles []string) []s
 		if role == "Administrator" {
 			permissions["Create a User"] = placeholder
 			permissions["Search for Users"] = placeholder
+			permissions["Check for Authorization"] = placeholder
+			permissions["Create a Product"] = placeholder
+			permissions["Search for Products"] = placeholder
+			permissions["View a Product"] = placeholder
+			permissions["Edit a Product"] = placeholder
 		}
 		//The idea is to add to this structure as new roles and permissions become available
 		//Eventually it should probably become a table or something

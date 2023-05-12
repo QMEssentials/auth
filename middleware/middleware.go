@@ -28,6 +28,11 @@ func RegisterGetUserFromToken(r *gin.Engine, tokenUtil *utilities.TokenUtil, use
 				c.Abort()
 				return
 			}
+			if userId == "" {
+				log.Info().Msg("No user ID returned from token; assuming expired token")
+				c.AbortWithStatus(http.StatusUnauthorized)
+				return
+			}
 			log.Info().Msgf("Authorization middleware found user ID '%s' in the token", userId)
 			user, err := userRepo.Select(userId)
 			if err != nil {

@@ -38,6 +38,11 @@ func (tu *TokenUtil) GetUserIdFromToken(encodedToken string) (string, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
+		if ve, ok := err.(*jwt.ValidationError); ok {
+			if ve.Errors&jwt.ValidationErrorExpired != 0 {
+				return "", nil
+			}
+		}
 		return "", err
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)

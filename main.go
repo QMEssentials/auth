@@ -54,5 +54,6 @@ func main() {
 	secure := r.Group("/secure")
 	routers.RegisterUsers(secure, userRepository, permissionsManger, tokenUtil, cryptoUtil)
 	routers.RegisterPermittedOperations(secure, permissionsManger)
+	routers.RegisterAuthzChecks(secure, permissionsManger, tokenUtil)
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

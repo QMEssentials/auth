@@ -40,6 +40,7 @@ func (tu *TokenUtil) GetUserIdFromToken(encodedToken string) (string, error) {
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorExpired != 0 {
+				log.Info().Msgf("Token %s has expired", encodedToken)
 				return "", nil
 			}
 		}

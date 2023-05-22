@@ -4,6 +4,7 @@ import (
 	"auth/repositories"
 	"auth/utilities"
 	"net/http"
+	"os"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,14 @@ func RegisterGetUserFromToken(r *gin.Engine, tokenUtil *utilities.TokenUtil, use
 				c.Next()
 				return
 			}
-			userId, err := tokenUtil.GetUserIdFromToken(tokens[1])
+			token := tokens[1]
+			if token == os.Getenv("SHARED_TOKENS.CONFIG") {
+				c.Set("User", "Service")
+				c.Set("Service", "Config")
+				c.Next()
+				return
+			}
+			userId, err := tokenUtil.GetUserIdFromToken(token)
 			if err != nil {
 				log.Error().Err(err).Stack().Msgf("Error getting user ID from token %s", tokens[1])
 				c.Writer.WriteHeader(http.StatusUnauthorized)

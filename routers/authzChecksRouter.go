@@ -27,6 +27,5 @@ func RegisterAuthzChecks(secure *gin.RouterGroup, permissionsManager *authorizat
 			return
 		}
 		c.JSON(http.StatusOK, doesSubjectHavePermissions)
-
 	})
 }

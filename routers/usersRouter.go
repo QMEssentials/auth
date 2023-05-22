@@ -44,7 +44,7 @@ func RegisterUsers(secure *gin.RouterGroup, userRepo *repositories.UserRepositor
 		c.JSON(http.StatusOK, user)
 	})
 	users.GET("/", func(c *gin.Context) {
-		requiredPermission := "Search for Users"
+		requiredPermission := "user-search"
 		authenticatedUser, ok := c.Get("user")
 		if !ok {
 			log.Error().Stack().Msg("User ID not found in context")
@@ -77,7 +77,7 @@ func RegisterUsers(secure *gin.RouterGroup, userRepo *repositories.UserRepositor
 		c.JSON(http.StatusOK, users)
 	})
 	users.POST("/", func(c *gin.Context) {
-		requiredPermission := "Create a User"
+		requiredPermission := "user-create"
 		authenticatedUser, ok := c.Get("user")
 		if !ok {
 			log.Error().Stack().Msg("User ID not found in context")

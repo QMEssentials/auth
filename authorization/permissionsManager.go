@@ -19,6 +19,11 @@ func NewPermissionsManager(userRepo *repositories.UserRepository) *PermissionsMa
 		{CanonicalName: "product-search", DisplayName: "Search for Products", Roles: []string{"Administrator"}},
 		{CanonicalName: "product-view", DisplayName: "View a Product", Roles: []string{"Administrator"}},
 		{CanonicalName: "product-edit", DisplayName: "Edit a Product", Roles: []string{"Administrator"}},
+		{CanonicalName: "test-create", DisplayName: "Create a Test", Roles: []string{"Administrator"}},
+		{CanonicalName: "test-search", DisplayName: "Search for Tests", Roles: []string{"Administrator"}},
+		{CanonicalName: "test-view", DisplayName: "View a Test", Roles: []string{"Administrator"}},
+		{CanonicalName: "test-edit", DisplayName: "Edit a Test", Roles: []string{"Administrator"}},
+		{CanonicalName: "unit-search", DisplayName: "Search for Units", Roles: []string{"Administrator"}},
 	}
 	return &PermissionsManager{userRepo: userRepo, permissions: &permissions}
 }
